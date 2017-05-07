@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <% include templates/header.ejs %>
+    <script src="../ckeditor/ckeditor.js"></script>
+    <title>Accueil</title>
+</head>
+<body>
+<header>
+    <% include templates/navBar.ejs %>
+</header>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3">
+            <form action="/edition/updateProfil" method="post">
+                <div class="well" align="center">
+                    <img src="images/lssd.JPG" class="img-circle" height="100" width="100" alt="lssd">
+                    <input type="text" name="NomPrenom" class="form-control" placeholder="Votre nom" value="<%= doc.nom %>"/>
+                </div>
+                <div class="well">
+                    <h4><label>Présentation :</label></h4>
+                    <textarea name="presentation" class="form-control"  ><%= doc.pres %></textarea><br>
+                </div>
+                <div class="well">
+                    <h4><label>Grade :</label></h4>
+                    <select class="form-control" name="grade">
+                        <option <% if (doc.grade === 'Professeur'){%>  selected <%}%> >Professeur</option>
+                        <option <% if (doc.grade === 'Maitre de conférence A'){%>  selected <%}%> >Maitre de conférence A</option>
+                        <option <% if (doc.grade === 'Maitre de conférence B'){%>  selected <%}%> >Maitre de conférence B</option>
+                        <option <% if (doc.grade === 'Maitre assistant A'){%>  selected <%}%> >Maitre assistant A</option>
+                        <option <% if (doc.grade === 'Maitre assistant B'){%>  selected <%}%> >Maitre assistant B</option>
+                        <option <% if (doc.grade === 'Doctorant'){%>  selected <%}%> >Doctorant</option>
+                    </select>
+                    <h4><label>E-mail :</label></h4>
+                    <input type="email" name="email" class="form-control"  value="<%= doc.email %>" ><br>
+                    <h4><label>Bureau : </label></h4>
+                    <input type="text" name="bureau" class="form-control"  value="<%= doc.bureau %>" >
+                </div>
+                <button type="submit" class="btn btn-default">Editer</button>
+            </form>
+        </div>
+
+
+        <div class="col-lg-9">
+            <div>
+                <ul class="nav nav-tabs">
+                    <%  doc.rubriques.forEach(function (rub){ %>
+                    <li <% if(rub.titre === doc.rubriques[0].titre ){%>class="active" <%} %> ><a data-toggle="tab" href="#<%= rub._id %>"><%= rub.titre %></a></li>
+                    <% }) %>
+                    <li><a data-toggle="tab" href="#Ajout">ajouter articles ou une rubrique</a></li>
+                </ul>
+            </div> <% //Div navigation tabbed panel %>
+
+
+            <div class="tab-content">
+                <% doc.rubriques.forEach(function (rub){ %>
+
+                <div id="<%= rub._id %>" class="tab-pane <% if(rub._id === doc.rubriques[0]._id ){%>active<%} %>">
+                    <br><br>
+                    <div class="container-fluid">
+
+                        <div class="row">
+                            <% rub.articles.reverse().forEach(function(art){ %>
+                            <div class="col-sm-12">
+                                <a href="/edition/deleteArticle?IDRubrique=<%=rub._id%>&IDArticle=<%=art._id%>" onclick="return confirm('êtes vous sur de vouloir supprimer cet Article ?');"> Supprimer</a>
+                                <a href="/edition/article?IDRubrique=<%=rub._id%>&IDArticle=<%=art._id%>">Editer</a>
+                                <div class="well" align="left">
+                                    <h2><%= art.titre %></h2>
+                                    <div><%- art.contenu %></div>
+                                </div>
+                            </div>
+                            <%})%>
+                        </div>
+                    </div>
+
+                </div>
+                <% }) %>
+
+                <div id="Ajout" class="tab-pane">
+                    <br><br>
+                    <div class="container-fluid">
+                        <div class="row">
+
+                            <div class="col-sm-12">
+                                <div class="well" align="left">
+                                    <form action="/edition/AddRubrique" method="post">
+                                        <h2>Ajouter une rubrique</h2>
+                                        <label>nom de la rubrique</label><br>
+                                        <input type="text" name="titreR" class="form-control"><br>
+                                        <div align="center">
+                                            <button type="submit" class="btn btn-default">Ajouter la rubrique</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <div class="well" align="left">
+                                    <form action="/edition/AddArticle" method="post">
+                                        <h2>Ajouter un article</h2>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4">
+                                                    <label for="nomRubrique">Rubrique:</label>
+                                                    <select class="form-control" name="nomRubrique">
+                                                        <% doc.rubriques.forEach(function (doc) { %>
+                                                        <option><%= doc.titre %></option>
+                                                        <%})%>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    <label>Titre:</label>
+                                                    <input type="text" class="form-control" name="titreA">
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <label for="summernote">Contenu:</label>
+                                            <textarea cols="10" id="Contenu" name="contenu" rows="10" >Mon editeur de texte</textarea>
+
+                                            <script>
+                                                //Ajout d'uploadcare à ckediteur
+                                                UPLOADCARE_PUBLIC_KEY = 'demopublickey';
+                                                CKEDITOR.replace( 'Contenu' , {
+                                                    extraPlugins: 'uploadcare',
+                                                    uploadcare: {
+                                                        multiple: true
+                                                    }
+                                                });
+
+                                            </script>
+                                            <div align="center">
+                                                <button type="submit" class="btn btn-default" >Ajouter l'article</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <% include templates/footer.ejs %>
+</div>
+</body>
+</html>
+

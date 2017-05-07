@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ok</title>
+    <% include templates/header.ejs %>
+</head>
+<body>
+<header>
+    <%include templates/navBar.ejs %>
+</header>
+
+<div class="container">
+    <% rub.articles.forEach(function(art){ %>
+    <div class="col-sm-12">
+        <div class="well">
+            <h2><%= art.titre %></h2>
+            <p><%- art.contenu %></p>
+        </div>
+    </div>
+    <%})%>
+
+
+</div>
+<% include templates/footer.ejs %>
+</body>
+</html>
