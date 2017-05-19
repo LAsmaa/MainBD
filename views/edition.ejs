@@ -14,12 +14,11 @@
         <div class="col-lg-3">
             <form action="/edition/updateProfil" method="post">
                 <div class="well" align="center">
-                    <img src="images/lssd.JPG" class="img-circle" height="100" width="100" alt="lssd">
-                    <input type="text" name="NomPrenom" class="form-control" placeholder="Votre nom" value="<%= doc.nom %>"/>
+                    <input type="text" name="NomPrenom" class="form-control" placeholder="Votre nom" <% if (doc.nom ) { %> value="<%= doc.nom %>" <%}%>/>
                 </div>
                 <div class="well">
                     <h4><label>Présentation :</label></h4>
-                    <textarea name="presentation" class="form-control"  ><%= doc.pres %></textarea><br>
+                    <textarea rows="6" name="presentation" class="form-control"  ><%= doc.pres %></textarea><br>
                 </div>
                 <div class="well">
                     <h4><label>Grade :</label></h4>
@@ -47,7 +46,8 @@
                     <%  doc.rubriques.forEach(function (rub){ %>
                     <li <% if(rub.titre === doc.rubriques[0].titre ){%>class="active" <%} %> ><a data-toggle="tab" href="#<%= rub._id %>"><%= rub.titre %></a></li>
                     <% }) %>
-                    <li><a data-toggle="tab" href="#Ajout">ajouter articles ou une rubrique</a></li>
+                    <li><a data-toggle="tab" href="#AjoutArticle">ajouter un articles</a></li>
+                    <li><a data-toggle="tab" href="#AjoutRubrique">ajouter une rubrique</a></li>
                 </ul>
             </div> <% //Div navigation tabbed panel %>
 
@@ -76,24 +76,10 @@
                 </div>
                 <% }) %>
 
-                <div id="Ajout" class="tab-pane">
+                <div id="AjoutArticle" class="tab-pane">
                     <br><br>
                     <div class="container-fluid">
                         <div class="row">
-
-                            <div class="col-sm-12">
-                                <div class="well" align="left">
-                                    <form action="/edition/AddRubrique" method="post">
-                                        <h2>Ajouter une rubrique</h2>
-                                        <label>nom de la rubrique</label><br>
-                                        <input type="text" name="titreR" class="form-control"><br>
-                                        <div align="center">
-                                            <button type="submit" class="btn btn-default">Ajouter la rubrique</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
                             <div class="col-sm-12">
                                 <div class="well" align="left">
                                     <form action="/edition/AddArticle" method="post">
@@ -141,13 +127,96 @@
 
                 </div>
 
+                <div id="AjoutRubrique" class="tab-pane">
+                    <br><br><br>
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="well">
+                                    <table class="table table-condensed">
+                                        <thead>
+                                        <tr>
+                                            <th>Nom de la rubrique</th>
+                                            <th>Nombre d'articles</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+
+                                        </tr>
+                                        <% doc.rubriques.forEach(function (doc) {%>
+                                        <tr>
+                                            <td><%= doc.titre %></td>
+                                            <td><%= doc.articles.length %></td>
+                                            <td>
+                                                <a href="edition/deleteRubrique?id=<%=doc._id%>">Supprimer</a>
+                                                <a href="#" data-toggle="modal" data-target="#update-modal<%=doc._id%>" ><span ></span>Renommer</a></li>
+                                                <div class="modal fade" id="update-modal<%=doc._id%>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                                                    <div class="modal-dialog">
+                                                        <br><br><br><br><br><br>
+                                                        <div class="col-sm-9 well" align="center">
+                                                            <div class="login-clean">
+                                                                <form class="form-horizontal" action="/edition/updateRubrique" method="post">
+                                                                    <div class="illustration"></div>
+                                                                    <div class="form-group">
+                                                                        <label class="control-label col-sm-5" for="User">Titre de la rubrique :</label>
+                                                                        <div class="col-sm-7">
+                                                                            <input type="text" class="form-control" id="User" placeholder="Nouveau titre" name="NewTitre" value="<%=doc.titre%>">
+                                                                            <input type="hidden" value="<%=doc._id%>" name="idRubrique">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-offset-2 col-sm-10">
+                                                                            <button type="submit" class="btn btn-default">Modifier</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+
+                                <form action="/edition/AddRubrique" method="post">
+                                    <div class="well">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <label>Ajouter une rubrique:</label>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" name="titreRubrique" placeholder="Nom de la nouvelle rubrique">
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <button type="submit" class="btn btn-default" >Ajouter la rubrique</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>
 </div>
-<div>
+<footer>
     <% include templates/footer.ejs %>
-</div>
+</footer>
 </body>
 </html>
 

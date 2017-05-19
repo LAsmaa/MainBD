@@ -1,18 +1,31 @@
 var express = require('express');
 var passport = require('passport');
 var Account = require('../models/account');
-var rubrique = require('../models/rubrique');
+var rubrique = require('../models/RubriqueSite');
 var profil = require('../models/profil');
 
 var router = express.Router();
 
+
+//Obtenir la liste des rubrique du site à partir du modéle de rubrique
+//Prendre uniquement le champ titre sans l'ID
+var navigation = rubrique.find({}).select({"titre": 1, "_id":0});
+
+
+
+// ================================//
+// ****** Accés aux pages ******** //
+// ================================//
+
 //acceder à la présentation
 router.get('/', function (req, res) {
+
     rubrique.findOne({titre: 'presentation'}, function (err, doc) {
         res.render('index', {
             doc:doc,
             user : req.user,
             Active: 'index',
+            navigation: navigation
         });
     })
 });
@@ -36,7 +49,8 @@ router.get('/membres', function(req, res, next) {
             user : req.user,
             listeProf: listeProf,
             doc: doc,
-            Active: 'membres'
+            Active: 'membres',
+            navigation: navigation
         });
     });
 });
@@ -52,9 +66,17 @@ router.get('/profile', function(req, res) {
     });
 });
 
+
+
+
+
+// ================================//
+// ********* Connexion *********** //
+// ================================//
+
 //Connexion d'utilisateur enseignant
 router.post('/login', passport.authenticate('local'), function(req, res) {
-    res.redirect('/');
+    res.redirect('/edition');
 });
 
 //Deconnexion d'utilisateur enseignant
@@ -64,9 +86,5 @@ router.get('/logout', function(req, res) {
 });
 
 
-
-router.get('/ping', function(req, res){
-    res.status(200).send("pong!");
-});
 
 module.exports = router;

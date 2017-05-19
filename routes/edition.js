@@ -3,9 +3,15 @@ var passport = require('passport');
 var profil = require('../models/profil');
 var router = express.Router();
 
+
+// ================================//
+// ***** Accés à l'édition ******* //
+// ================================//
+// ********** Acceder a la page de modification ***** //  ================================> OK
 router.get('/', function(req, res, next) {
     if (req.user){
         profil.findOne({user: req.user.username}, function (err, prof) {
+            if (prof)        console.log("user trouvé");
             res.render('edition', {
                 doc: prof,
                 user: req.user,
@@ -17,16 +23,22 @@ router.get('/', function(req, res, next) {
 
 });
 
-//Mettre a jou un profil
+
+
+
+// ================================//
+// ************ Profil *********** //
+// ================================//
+// ****** Mettre a jou un profil *******  // ============================================> OK
 router.post('/updateProfil', function (req, res) {
     profil.findOne({user: req.user.username}, function (err, doc) {
-        doc.nom= req.body.NomPrenom;
-        doc.pres= req.body.presentation;
-        doc.grade= req.body.grade;
-        doc.email= req.body.email;
-        doc.bureau= req.body.bureau;
-        doc.
-        save(function (err) {
+
+        doc.pres    = req.body.presentation;
+        doc.nom     = req.body.NomPrenom;
+        doc.grade   = req.body.grade;
+        doc.email   = req.body.email;
+        doc.bureau  = req.body.bureau;
+        doc.save(function (err) {
             if (err){
                 consore.error("******** Erreur lors de la sauvegarde ********");
             }else {
@@ -39,6 +51,75 @@ router.post('/updateProfil', function (req, res) {
 
 });
 
+
+// ****** Modification du mot de passe *******  //
+router.post('/configuration', function (req, res, next) {
+    if (req.user){
+        var username = req.user.username;
+        var password = req.user.password;
+        var newpassword = req.body.newPassword;
+        var user = req.user;
+
+        account.findByUsername(username).then(function(sanitizedUser) {
+            if (sanitizedUser) {
+                sanitizedUser.setPassword(newpassword, function() {
+                    sanitizedUser.save();
+                    console.log('password reset successful');
+                });
+            } else {
+                console.log('user does not exist');
+            }
+        }, function(err) {
+            console.error(err);
+        })
+        res.redirect('/edition');
+    }
+
+    else
+        res.redirect('/');
+
+});
+
+//Acceder à la page de configuration d'un article
+router.get('/configuration', function (req, res, next) {
+    if (req.user)
+        res.render('configuration', {
+            Active: 'index',
+            user : req.user
+        });
+    else
+        res.redirect('/');
+
+});
+
+
+// ================================//
+// ******** RUBRIQUES ******** //
+// ================================//
+
+// ****** Ajouter rubrique *******  //
+router.post('/AddRubrique', function (req, res) {
+    if (req.user){
+        profil.findOne({user: req.user.username}, function (err, prof) {
+            prof.rubriques.push({ titre : req.body.titreR });
+            prof.save(function (err) {
+                if (err){
+                    consore.error("******** Erreur lors de la sauvegarde de la rubrique ********");
+                }else {
+                    console.log('******** Rubrique ajouté ********');
+                    res.redirect('/edition');}
+
+            })
+
+        })
+    }else
+        res.redirect('/');
+});
+
+
+// ================================//
+// ********** Articles *********** //
+// ================================//
 //Ajouter article
 router.post('/addArticle', function (req, res) {
     if (req.user){
@@ -100,24 +181,7 @@ router.get('/deleteArticle', function (req, res) {
 
 });
 
-//Ajouter rubrique
-router.post('/AddRubrique', function (req, res) {
-    if (req.user){
-        profil.findOne({user: req.user.username}, function (err, prof) {
-            prof.rubriques.push({ titre : req.body.titreR });
-            prof.save(function (err) {
-                if (err){
-                    consore.error("******** Erreur lors de la sauvegarde de la rubrique ********");
-                }else {
-                    console.log('******** Rubrique ajouté ********');
-                    res.redirect('/edition');}
 
-            })
-
-        })
-    }else
-        res.redirect('/');
-});
 
 //Page de modification d'article ***Erreur _id de l'article undefined
 router.post('/article', function (req, res) {
@@ -189,15 +253,6 @@ router.get('/article', function (req, res) {
 });
 
 
-//Acceder à la page de configuration d'un article
-router.get('/configuration', function (req, res, next) {
-    if (req.user)
-        res.render('configuration', {
-            user : req.user
-        });
-    else
-        res.redirect('/');
 
-});
 
 module.exports = router;

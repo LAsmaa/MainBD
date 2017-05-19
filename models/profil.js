@@ -1,11 +1,12 @@
 
-// models/profile.ejs
+// models/profil.ejs
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var article = new Schema({
     titre: String,
+    date: String,
     contenu: String
 });
 

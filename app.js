@@ -8,6 +8,11 @@ var bodyParser = require('body-parser');
 //Importer mongoose package
 var mongoose = require('mongoose');
 
+//Gestion des fichier (Dans notre cas uniquement les images )
+var fs = require('fs-utils');
+var multer  = require('multer');
+var upload = multer({ dest: 'uploads/' });
+
 //Importer parrport pour la connexion de l'administrateur
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -23,6 +28,7 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -31,6 +37,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(__dirname + '/public'));
+
+
 
 
 //Ajouter le path pour Ckeditor
@@ -46,6 +54,8 @@ app.use(require('express-session')({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+
 
 //Passport configuration
 var account = require('./models/account');
