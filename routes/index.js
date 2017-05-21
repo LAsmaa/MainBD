@@ -7,11 +7,6 @@ var profil = require('../models/profil');
 var router = express.Router();
 
 
-//Obtenir la liste des rubrique du site à partir du modéle de rubrique
-//Prendre uniquement le champ titre sans l'ID
-var navigation = rubrique.find({}).select({"titre": 1, "_id":0});
-
-
 
 // ================================//
 // ****** Accés aux pages ******** //
@@ -19,25 +14,30 @@ var navigation = rubrique.find({}).select({"titre": 1, "_id":0});
 
 //acceder à la présentation
 router.get('/', function (req, res) {
-
-    rubrique.findOne({titre: 'presentation'}, function (err, doc) {
-        res.render('index', {
-            doc:doc,
-            user : req.user,
-            Active: 'index',
-            navigation: navigation
-        });
+    rubrique.findOne({titre: 'Présentation'}, function (err, rub) {
+        rubrique.find(function (err, nav) {
+            res.render('index', {
+                rub:rub,
+                user : req.user,
+                Active: 'index',
+                nav: nav
+            });
+        })
     })
 });
 
 //Acceder aux autre rubriques
 router.get('/rubrique', function (req, res) {
     rubrique.findOne({titre: req.query.titre}, function (err, rub) {
-        res.render('rubrique', {
-            rub:rub,
-            user : req.user,
-            Active: req.query.titre,
-        });
+        rubrique.find(function (err, nav) {
+            res.render('rubrique', {
+                rub:rub,
+                nav: nav,
+                user : req.user,
+                Active: req.query.titre,
+            });
+        })
+
     })
 });
 
@@ -45,24 +45,30 @@ router.get('/rubrique', function (req, res) {
 router.get('/membres', function(req, res, next) {
     var listeProf = profil.find(function (err, doc) {
         if (err) return console.error(err);
-        res.render('membres', {
-            user : req.user,
-            listeProf: listeProf,
-            doc: doc,
-            Active: 'membres',
-            navigation: navigation
-        });
+        rubrique.find(function (err, nav) {
+            res.render('membres', {
+                user : req.user,
+                listeProf: listeProf,
+                nav: nav,
+                doc: doc,
+                Active: 'membres'
+            });
+        })
+
     });
 });
 
 //Acceder à un profil d'utilisateur
 router.get('/profile', function(req, res) {
     profil.findOne({nom: req.query.nom} ,function (err, doc) {
-        res.render('profile', {
-            doc: doc,
-            user: req.user,
-            Active: 'membres'
-        });
+        rubrique.find(function (err, nav) {
+            res.render('profile', {
+                doc: doc,
+                user: req.user,
+                nav: nav,
+                Active: 'membres'
+            });
+        })
     });
 });
 

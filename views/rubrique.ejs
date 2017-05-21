@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ok</title>
+    <title><%= rub.titre%></title>
     <% include templates/header.ejs %>
 </head>
 <body>
@@ -9,16 +9,17 @@
     <%include templates/navBar.ejs %>
 </header>
 
-<div class="container">
-    <% rub.articles.forEach(function(art){ %>
-    <div class="col-sm-12">
-        <div class="well">
-            <h2><%= art.titre %></h2>
-            <p><%- art.contenu %></p>
+<div class="containerMain">
+    <div class="container">
+        <% rub.articles.forEach(function(art){ %>
+        <div class="col-sm-12">
+            <div class="well">
+                <h2><%= art.titre %></h2>
+                <p><%- art.contenu %></p>
+            </div>
         </div>
+        <%})%>
     </div>
-    <%})%>
-
 
 </div>
 <% include templates/footer.ejs %>

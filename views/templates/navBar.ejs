@@ -10,11 +10,14 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
-
                 <li <% if (Active === 'index'){%> class="active"<%}%>><a href="/">Présentation</a></li>
                 <li <% if (Active === 'membres'){%> class="active"<%}%>><a href="/membres">Membres</a></li>
-                <li <% if (Active === 'activites'){%> class="active"<%}%>><a href="/activites">Activités</a></li>
-                <li <% if (Active === 'publications'){%> class="active"<%}%>><a href="/publications">Publications</a></li>
+                <% nav.forEach(function (doc) {
+                    if(doc.titre != 'Présentation'){
+                %>
+                    <li <% if (Active === doc.titre ){%> class="active"<%}%>><a href="/rubrique?titre=<%=doc.titre%>"><%= doc.titre %></a></li>
+
+                <%}})%>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <%if (!user) {%><li><a href="#" data-toggle="modal" data-target="#login-modal" ><span class="glyphicon glyphicon-log-in"></span>  Login</a></li>
@@ -42,6 +45,7 @@
                                         </div>
                                     </div>
                                 </form>
+                                <a href="http://localhost:8080/login">Se connecter en tant qu'administrateur</a>
                             </div>
                         </div>
                     </div>
@@ -52,29 +56,7 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%= user.username %> connecté<span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="/edition"><span class="glyphicon glyphicon-edit"></span> Editer </a></li>
-                            <li><a href="#" data-toggle="modal" data-target="#UpdatePassword-modal" ><span class="glyphicon glyphicon-log-in"></span> Modifier Mot de passe </a></li>
-                            <div class="modal fade" id="UpdatePassword-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-                                <div class="modal-dialog">
-                                    <div class="col-sm-8 well" align="center">
-                                        <div class="login-clean">
-                                            <form class="form-horizontal" action="/edition/configuration" method="post">
-                                                <div class="illustration"></div>
-                                                <div class="form-group">
-                                                    <label class="control-label col-sm-5" for="User">Nouveau mot de passe:</label>
-                                                    <div class="col-sm-7">
-                                                        <input type="password" class="form-control" name="newPassword">
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <div class="col-sm-offset-2 col-sm-10">
-                                                        <button type="submit" class="btn btn-default">Modifier l mot de passe</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <li><a href="/edition/configuration" ><span class="glyphicon glyphicon-log-in"></span> Modifier Mot de passe </a></li>
 
 
                             <li> <a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Decconexion </a></li>

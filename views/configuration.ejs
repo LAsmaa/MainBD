@@ -9,12 +9,27 @@
 <header>
     <% include templates/navBar.ejs%>
 </header>
-<div class="container">
-    <form action="/edition/configuration" method="post">
-        <input type="text" class="form-control" name="newPassword">
-        <button type="submit" class="btn btn-default" >Modifier l'article</button>
-    </form>
+<div class="containerMain">
+    <div class="container" align="center">
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <h3>Modifier le mot de passe</h3>
+                    <form action="/edition/configuration" method="post">
+                        <input type="password" class="form-control" name="newPassword">
+                        <br>
+                        <button type="submit" class="btn btn-default"> Modifier le mot de passe </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
 </div>
+
 <footer>
     <% include templates/footer.ejs %>
 </footer>

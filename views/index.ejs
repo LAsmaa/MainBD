@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Accueil</title>
+    <title>Présentation</title>
       <% include templates/header.ejs %>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
   </head>
@@ -14,23 +14,27 @@
 <div>
   <div class="containerMain">
     <div class="container">
+
       <div class="row">
         <div class="col-sm-8">
-          <div class="jumbotron">
-            <h3>
-              Présentation de l'équipe
-            </h3>
-            L'équipe de recherche Bases de Données (BD) du Laboratoire Signaux, Systèmes et Données (LSSD) fait partie de la faculté des Mathématique et Informatique USTO MB. L'objectif principal de l'équipe est de couvrir les problématiques actuelles autour de la donnée. Plusieurs thématiques sont traitées au sein de l'équipe : la gestion de différents types de données (Images, données spatiales,...), la sécurité des données, la fouille de données...etc.
+            <% rub.articles.forEach(function(art){ %>
+            <div class="well">
+              <div class="well-lg">
+                <h2><%= art.titre %></h2>
 
-            L'équipe est dirigée par Mme Belbachir, elle est constituée d'une dizaine d'enseignants (professeurs, maîtres de conférences...) dirigeant une vingtaine de doctorants. L'équipe BD a décidé de se doter d'un portail web comme vitrine pour présenter ses travaux, intérêts et évènements au public intéressé. Les enseignants pourront aussi avoir un espace personnel où présenter leurs enseignements et travaux.
+                <p><%- art.contenu %></p>
+
+              </div>
+            </div>
           </div>
-        </div>
+            <%})%>
+
         <div class="col-sm-4">
           <div class="well">
             <h3>Nouvelles</h3>
           </div>
-
         </div>
+      </div>
 
 
       </div>

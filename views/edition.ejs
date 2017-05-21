@@ -34,8 +34,9 @@
                     <input type="email" name="email" class="form-control"  value="<%= doc.email %>" ><br>
                     <h4><label>Bureau : </label></h4>
                     <input type="text" name="bureau" class="form-control"  value="<%= doc.bureau %>" >
+                    <br>
+                    <button type="submit" class="btn btn-default"> Enregistrer </button>
                 </div>
-                <button type="submit" class="btn btn-default">Editer</button>
             </form>
         </div>
 
@@ -43,27 +44,73 @@
         <div class="col-lg-9">
             <div>
                 <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#Gestion">Gestion</a></li>
                     <%  doc.rubriques.forEach(function (rub){ %>
-                    <li <% if(rub.titre === doc.rubriques[0].titre ){%>class="active" <%} %> ><a data-toggle="tab" href="#<%= rub._id %>"><%= rub.titre %></a></li>
+                    <li><a data-toggle="tab" href="#<%= rub._id %>"><%= rub.titre %></a></li>
                     <% }) %>
                     <li><a data-toggle="tab" href="#AjoutArticle">ajouter un articles</a></li>
-                    <li><a data-toggle="tab" href="#AjoutRubrique">ajouter une rubrique</a></li>
                 </ul>
             </div> <% //Div navigation tabbed panel %>
 
 
             <div class="tab-content">
                 <% doc.rubriques.forEach(function (rub){ %>
-
-                <div id="<%= rub._id %>" class="tab-pane <% if(rub._id === doc.rubriques[0]._id ){%>active<%} %>">
+                <div id="<%= rub._id %>" class="tab-pane">
                     <br><br>
                     <div class="container-fluid">
 
                         <div class="row">
                             <% rub.articles.reverse().forEach(function(art){ %>
                             <div class="col-sm-12">
-                                <a href="/edition/deleteArticle?IDRubrique=<%=rub._id%>&IDArticle=<%=art._id%>" onclick="return confirm('êtes vous sur de vouloir supprimer cet Article ?');"> Supprimer</a>
-                                <a href="/edition/article?IDRubrique=<%=rub._id%>&IDArticle=<%=art._id%>">Editer</a>
+                                <a href="/edition/deleteArticle?IDRubrique=<%=rub._id%>&IDArticle=<%=art._id%>" onclick="return confirm('êtes vous sur de vouloir supprimer cet Article ?');"><span class="glyphicon glyphicon-trash"></span> Supprimer</a>
+
+
+
+                                <a href="#" data-toggle="modal" data-target="#update-modal<%=art._id%>" ><span class="glyphicon glyphicon-pencil"></span> Editer </a></li>
+                                <div class="modal fade" id="update-modal<%=art._id%>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                                    <div class="modal-dialog">
+                                        <br><br>
+                                        <div  align="center">
+                                            <div class="login-clean">
+                                                <form action="/edition/updateArticle" method="post">
+                                                    <div class="well">
+                                                        <h2>Modifier l'article</h2>
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-sm-12">
+                                                                    <label for="titreA">Titre:</label>
+                                                                    <input type="text" class="form-control" name="titreA" value="<%= art.titre%>">
+                                                                </div>
+                                                            </div>
+                                                            <br>
+                                                            <label for="Contenu<%= art._id%>">Contenu:</label>
+                                                            <textarea cols="10" id="Contenu<%= art._id%>" name="Contenu" rows="10" ><%- art.contenu %></textarea>
+                                                            <script>
+                                                                //Ajout d'uploadcare à ckediteur
+                                                                UPLOADCARE_PUBLIC_KEY = 'demopublickey';
+                                                                CKEDITOR.replace( 'Contenu<%= art._id%>' , {
+                                                                    extraPlugins: 'uploadcare',
+                                                                    uploadcare: {
+                                                                        multiple: true
+                                                                    }
+                                                                });
+
+                                                            </script>
+                                                            <input type="hidden" value="<%= art._id %>" name="idArticle">
+                                                            <input type="hidden" value="<%= rub._id %>" name="idRubrique">
+                                                            <div align="center">
+                                                                <br>
+                                                                <button type="submit" class="btn btn-default" >Modifier l'article</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
                                 <div class="well" align="left">
                                     <h2><%= art.titre %></h2>
                                     <div><%- art.contenu %></div>
@@ -76,58 +123,8 @@
                 </div>
                 <% }) %>
 
-                <div id="AjoutArticle" class="tab-pane">
-                    <br><br>
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="well" align="left">
-                                    <form action="/edition/AddArticle" method="post">
-                                        <h2>Ajouter un article</h2>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="col-sm-4">
-                                                    <label for="nomRubrique">Rubrique:</label>
-                                                    <select class="form-control" name="nomRubrique">
-                                                        <% doc.rubriques.forEach(function (doc) { %>
-                                                        <option><%= doc.titre %></option>
-                                                        <%})%>
-                                                    </select>
-                                                </div>
-                                                <div class="col-sm-8">
-                                                    <label>Titre:</label>
-                                                    <input type="text" class="form-control" name="titreA">
-                                                </div>
-                                            </div>
-                                            <br>
-                                            <label for="summernote">Contenu:</label>
-                                            <textarea cols="10" id="Contenu" name="contenu" rows="10" >Mon editeur de texte</textarea>
 
-                                            <script>
-                                                //Ajout d'uploadcare à ckediteur
-                                                UPLOADCARE_PUBLIC_KEY = 'demopublickey';
-                                                CKEDITOR.replace( 'Contenu' , {
-                                                    extraPlugins: 'uploadcare',
-                                                    uploadcare: {
-                                                        multiple: true
-                                                    }
-                                                });
-
-                                            </script>
-                                            <div align="center">
-                                                <button type="submit" class="btn btn-default" >Ajouter l'article</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                </div>
-
-                <div id="AjoutRubrique" class="tab-pane">
+                <div id="Gestion" class="tab-pane active">
                     <br><br><br>
                     <div class="col-sm-12">
                         <div class="row">
@@ -145,14 +142,15 @@
                                         <tr>
 
                                         </tr>
-                                        <% doc.rubriques.forEach(function (doc) {%>
+                                        <% doc.rubriques.forEach(function (rub) {%>
                                         <tr>
-                                            <td><%= doc.titre %></td>
-                                            <td><%= doc.articles.length %></td>
+                                            <td><%= rub.titre %></td>
+                                            <td><%= rub.articles.length %></td>
                                             <td>
-                                                <a href="edition/deleteRubrique?id=<%=doc._id%>">Supprimer</a>
-                                                <a href="#" data-toggle="modal" data-target="#update-modal<%=doc._id%>" ><span ></span>Renommer</a></li>
-                                                <div class="modal fade" id="update-modal<%=doc._id%>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                                                <a href="edition/DeleteRubrique?IDRubrique=<%=rub._id%>"><span class="glyphicon glyphicon-trash"></span> Supprimer</a>
+
+                                                <a href="#" data-toggle="modal" data-target="#update-modal<%=rub._id%>" ><span class="glyphicon glyphicon-pencil"></span>Renommer</a></li>
+                                                <div class="modal fade" id="update-modal<%=rub._id%>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
                                                     <div class="modal-dialog">
                                                         <br><br><br><br><br><br>
                                                         <div class="col-sm-9 well" align="center">
@@ -169,6 +167,51 @@
                                                                     <div class="form-group">
                                                                         <div class="col-sm-offset-2 col-sm-10">
                                                                             <button type="submit" class="btn btn-default">Modifier</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <a href="#" data-toggle="modal" data-target="#add-modal<%=rub._id%>" ><span class="glyphicon glyphicon-plus"></span> Ajouter un Article</a></li>
+                                                <div class="modal fade" id="add-modal<%=rub._id%>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                                                    <div class="modal-dialog">
+                                                        <br><br><br>
+                                                        <div align="center">
+                                                            <div class="login-clean">
+                                                                <form action="/edition/AddArticle" method="post">
+                                                                    <div class="well">
+                                                                        <div class="form-group">
+                                                                            <div class="row">
+                                                                                <input type="hidden" name="nomRubrique" value="<%= rub.titre %>" >
+                                                                                <div>
+                                                                                    <label>Titre:</label>
+                                                                                    <input type="text" class="form-control" name="titreA">
+                                                                                </div>
+                                                                            </div>
+                                                                            <br>
+                                                                            <label for="summernote">Contenu:</label>
+                                                                            <textarea cols="10" id="Contenu<%= rub._id %>" name="contenu" rows="10" >Mon editeur de texte</textarea>
+
+                                                                            <script>
+                                                                                //Ajout d'uploadcare à ckediteur
+                                                                                UPLOADCARE_PUBLIC_KEY = 'demopublickey';
+                                                                                CKEDITOR.replace( 'Contenu<%= rub._id %>' , {
+                                                                                    extraPlugins: 'uploadcare',
+                                                                                    uploadcare: {
+                                                                                        multiple: true
+                                                                                    }
+                                                                                });
+
+                                                                            </script>
+
+
+                                                                            <div align="center">
+                                                                                <br>
+                                                                                <button type="submit" class="btn btn-default" >Ajouter l'article</button>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </form>

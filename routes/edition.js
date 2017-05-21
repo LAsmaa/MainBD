@@ -1,6 +1,8 @@
 var express = require('express');
 var passport = require('passport');
 var profil = require('../models/profil');
+var rubrique = require('../models/RubriqueSite');
+var account = require('../models/account');
 var router = express.Router();
 
 
@@ -11,12 +13,14 @@ var router = express.Router();
 router.get('/', function(req, res, next) {
     if (req.user){
         profil.findOne({user: req.user.username}, function (err, prof) {
-            if (prof)        console.log("user trouvé");
-            res.render('edition', {
-                doc: prof,
-                user: req.user,
-                Active: 'index' //Designe la page active
-            });
+            rubrique.find(function (err, nav) {
+                res.render('edition', {
+                    nav: nav,
+                    doc: prof,
+                    user: req.user,
+                    Active: 'index' //Designe la page active
+                });
+            })
         });
     }else
         res.redirect('/');
@@ -29,6 +33,7 @@ router.get('/', function(req, res, next) {
 // ================================//
 // ************ Profil *********** //
 // ================================//
+
 // ****** Mettre a jou un profil *******  // ============================================> OK
 router.post('/updateProfil', function (req, res) {
     profil.findOne({user: req.user.username}, function (err, doc) {
@@ -82,14 +87,19 @@ router.post('/configuration', function (req, res, next) {
 
 //Acceder à la page de configuration d'un article
 router.get('/configuration', function (req, res, next) {
-    if (req.user)
-        res.render('configuration', {
-            Active: 'index',
-            user : req.user
+    if (req.user){
+        profil.findOne({user: req.user.username}, function (err, prof) {
+            rubrique.find(function (err, nav) {
+                res.render('configuration', {
+                    nav: nav,
+                    doc: prof,
+                    user: req.user,
+                    Active: 'index' //Designe la page active
+                });
+            })
         });
-    else
+    }else
         res.redirect('/');
-
 });
 
 
@@ -97,11 +107,11 @@ router.get('/configuration', function (req, res, next) {
 // ******** RUBRIQUES ******** //
 // ================================//
 
-// ****** Ajouter rubrique *******  //
+// ****** Ajouter rubrique *******  // ================================================> OK
 router.post('/AddRubrique', function (req, res) {
     if (req.user){
         profil.findOne({user: req.user.username}, function (err, prof) {
-            prof.rubriques.push({ titre : req.body.titreR });
+            prof.rubriques.push({ titre : req.body.titreRubrique });
             prof.save(function (err) {
                 if (err){
                     consore.error("******** Erreur lors de la sauvegarde de la rubrique ********");
@@ -116,11 +126,33 @@ router.post('/AddRubrique', function (req, res) {
         res.redirect('/');
 });
 
+// ****** Delete Rubrique ******* // ==================================================> OK
+router.get('/DeleteRubrique', function (req, res) {
+    if (req.user){
+        var id = req.query.IDRubrique;
+        profil.findOne({user: req.user.username}, function (err, prof){
+            prof.rubriques.id(id).remove();
+            prof.save(function (err) {
+                if (err){
+                    consore.error("******** Erreur lors de la supression de la rubrique ********");
+                }else {
+                    res.redirect('/edition');
+                }
+
+            })
+        })
+    }
+    else
+        res.redirect('/');
+
+});
+
 
 // ================================//
 // ********** Articles *********** //
 // ================================//
-//Ajouter article
+
+// ******* Ajouter article *********// ================================================> OK
 router.post('/addArticle', function (req, res) {
     if (req.user){
         profil.findOne({user: req.user.username}, function (err, prof){
@@ -151,12 +183,12 @@ router.post('/addArticle', function (req, res) {
 
 });
 
-//Supprimer article
+// ******* Supprimer article  *********// ==============================================> OK
 router.get('/deleteArticle', function (req, res) {
     if (req.user){
-        var id = req.quey.IDArticle;
+        var id = req.query.IDArticle;
         var IDRubrique = req.query.IDRubrique;
-        console.log('Article ' + id + ' Rubrique ' + IDRubrique);
+
         profil.findOne({user: req.user.username}, function (err, prof){
             prof.rubriques.forEach(function (rub, err) {
                 if (rub._id == IDRubrique) {
@@ -182,75 +214,43 @@ router.get('/deleteArticle', function (req, res) {
 });
 
 
-
-//Page de modification d'article ***Erreur _id de l'article undefined
-router.post('/article', function (req, res) {
+//****** modification d'article *******// ==============================================> OK
+router.post('/updateArticle', function (req, res) {
     if (req.user){
-        var id = req.body.IDArticle;
-        var IDRubrique = req.body.IDRubrique;
-        console.log('Article ' + id + ' Rubrique ' + IDRubrique);
+        var id = req.body.idArticle;
+        var IDRubrique = req.body.idRubrique;
+
         profil.findOne({user: req.user.username}, function (err, prof){
             prof.rubriques.forEach(function (rub, err) {
                 if (rub._id == IDRubrique) {
-                    console.log('***********ICI RUBRIQUE*********');
-                    console.log(rub._id);
-                    rub.articles.forEach(function (err, art) {
-                        console.log(art._id);
-                        if (art._id == id){
-                            art.titre= req.body.titreA;
-                            art.contenu= req.body.contenu;
-                            console.log('***********ICI ARTICLE*********')
-                        }
-                    })
-                }else {
-                    console.log('***********PAS ICI*********')
+                    rub.articles.id(id).remove();
+                    console.log('******** Article supprime ********');
+                    rub.articles.push({
+                        titre: req.body.titreA,
+                        contenu: req.body.Contenu
+                    });
+                }else{
+                    console.log('Pas celle là '+ rub._id + '\n' );
                 }
             });
             prof.save(function (err) {
                 if (err){
-                    consore.error("******** Erreur lors de la sauvegarde ********");
+                    consore.error("******** Erreur lors de la supression de l'article ********");
                 }else {
-                    console.log('******** article Mis a jour ********');
                     res.redirect('/edition');
                 }
 
             })
-
         })
+
+
     }
     else
         res.redirect('/');
 
 });
 
-//Modification d'article
-router.get('/article', function (req, res) {
-    if (req.user){
-        var id = req.query.IDArticle;
-        var IDRubrique = req.query.IDRubrique;
-        console.log('Article ' + id + ' Rubrique ' + IDRubrique);
-        profil.findOne({user: req.user.username}, function (err, prof){
-            prof.rubriques.forEach(function (rub, err) {
-                if (rub._id == IDRubrique) {
-                    res.render('article', {
-                        IDArticle: id,
-                        IDRubrique: IDRubrique,
-                        art: rub.articles.id(id),
-                        user : req.user,
-                        Active: 'index'
-                    });
 
-                }else {
-                    console.log('***********ERREUR *********')
-                }
-            })
-
-        })
-    }
-    else
-        res.redirect('/');
-
-});
 
 
 
