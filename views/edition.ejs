@@ -48,7 +48,6 @@
                     <%  doc.rubriques.forEach(function (rub){ %>
                     <li><a data-toggle="tab" href="#<%= rub._id %>"><%= rub.titre %></a></li>
                     <% }) %>
-                    <li><a data-toggle="tab" href="#AjoutArticle">ajouter un articles</a></li>
                 </ul>
             </div> <% //Div navigation tabbed panel %>
 
@@ -147,7 +146,8 @@
                                             <td><%= rub.titre %></td>
                                             <td><%= rub.articles.length %></td>
                                             <td>
-                                                <a href="edition/DeleteRubrique?IDRubrique=<%=rub._id%>"><span class="glyphicon glyphicon-trash"></span> Supprimer</a>
+                                                <a href="edition/DeleteRubrique?IDRubrique=<%=rub._id%>" onclick="return confirm('êtes vous sur de vouloir supprimer cette rubrique ? \n' +
+             'Toute les informations relatives seront supprimés');"  ><span class="glyphicon glyphicon-trash"></span> Supprimer</a>
 
                                                 <a href="#" data-toggle="modal" data-target="#update-modal<%=rub._id%>" ><span class="glyphicon glyphicon-pencil"></span>Renommer</a></li>
                                                 <div class="modal fade" id="update-modal<%=rub._id%>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">

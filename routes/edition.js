@@ -147,6 +147,36 @@ router.get('/DeleteRubrique', function (req, res) {
 
 });
 
+// ****** Update Rubrique ****** //
+router.post('/updateRubrique', function (req, res) {
+    if (req.user){
+        profil.update(
+            {
+                user: req.user.username,
+                "rubriques._id": req.body.IdRubrique
+            },{
+                "$set": {
+                    "rubriques.$.titre": req.body.NewTitre
+                }
+            },
+            function(err, doc){
+                if (err){
+                    consore.error("******** Erreur lors de la sauvegarde de la mise a jour  ********");
+                }else {
+                    console.log('******** Rubrique Mise à jour ********');
+                    res.redirect('/edition');
+                }
+
+            }
+
+        )
+
+    }else
+        res.redirect('/');
+
+
+})
+
 
 // ================================//
 // ********** Articles *********** //

@@ -18,6 +18,7 @@
       <div class="row">
         <div class="col-sm-8">
             <% rub.articles.forEach(function(art){ %>
+          <% if(art.titre == 'Présentation'){ %>
             <div class="well">
               <div class="well-lg">
                 <h2><%= art.titre %></h2>
@@ -27,11 +28,19 @@
               </div>
             </div>
           </div>
-            <%})%>
+
+          <%}})%>
+
 
         <div class="col-sm-4">
           <div class="well">
             <h3>Nouvelles</h3>
+              <% rub.articles.reverse().forEach(function(art){ %>
+              <% if(art.titre != 'Présentation'){ %>
+            <hr>
+            <h4><%= art.titre %></h4>
+            <p><%- art.contenu %></p>
+              <%}})%>
           </div>
         </div>
       </div>
