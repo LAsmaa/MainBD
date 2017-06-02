@@ -37,14 +37,6 @@ router.get('/', function(req, res, next) {
 // ****** Mettre a jou un profil *******  // ============================================> OK
 router.post('/updateProfil', function (req, res) {
     if(req.user){
-        //Se connecter avec la clé d'édition d'un profil
-        // Clé spéciale utilisateur enseignant
-        mongoose.connect('UrlUser'); //L'adresse de notre base de données
-        var db = mongoose.connection;
-        db.on('error', console.error.bind(console, 'connection error : '));
-        db.once('open',function(){
-            console.log("We are connected"); //Message a transmettre si connexion réussie
-        })
 
         profil.findOne({user: req.user.username}, function (err, doc) {
 
