@@ -22,16 +22,15 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-
-                            </tr>
-                            <% doc.forEach(function (doc) { %>
+                            <% doc.forEach(function (doc) {
+                                if(doc.nom){
+                            %>
                             <tr>
                                 <td><a href="/profile?nom=<%=doc.nom%>"><%= doc.nom %> </a></td>
                                 <td><%= doc.grade %></td>
                                 <td><%= doc.email%></td>
                             </tr>
-                            <% }) %>
+                            <%} }) %>
 
                             </tbody>
                         </table>

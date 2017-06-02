@@ -64,12 +64,20 @@ passport.serializeUser(account.serializeUser());
 passport.deserializeUser(account.deserializeUser());
 
 //Se connecter a notre base de données
-mongoose.connect('mongodb://Asmaa:1ARIGATOU@ds151451.mlab.com:51451/equipe_de_recherche_bd'); //L'adresse de notre base de données
+//Se fait dans les routes;
+// Une clé diférente pour les user non identifiés et deux qui le sont
+//La clé des user externes est pour lecture uniquemet
+//La clé des user enseignant peut modifier aussi
+//Fermeture de la BDD aprés utilisation
+
+//Connextion avec clé Admin
+mongoose.connect('mongodb://User:123123@ds151451.mlab.com:51451/equipe_de_recherche_bd'); //L'adresse de notre base de données
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error : '));
 db.once('open',function(){
     console.log("We are connected"); //Message a transmettre si connexion réussie
 })
+
 
 app.use('/', index);
 app.use('/users', users);

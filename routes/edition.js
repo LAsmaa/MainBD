@@ -36,23 +36,38 @@ router.get('/', function(req, res, next) {
 
 // ****** Mettre a jou un profil *******  // ============================================> OK
 router.post('/updateProfil', function (req, res) {
-    profil.findOne({user: req.user.username}, function (err, doc) {
-
-        doc.pres    = req.body.presentation;
-        doc.nom     = req.body.NomPrenom;
-        doc.grade   = req.body.grade;
-        doc.email   = req.body.email;
-        doc.bureau  = req.body.bureau;
-        doc.save(function (err) {
-            if (err){
-                consore.error("******** Erreur lors de la sauvegarde ********");
-            }else {
-                console.log('******** Profile Mis a jour ********');
-                res.redirect('/edition');
-            }
-
+    if(user){
+        //Se connecter avec la clé d'édition d'un profil
+        // Clé spéciale utilisateur enseignant
+        mongoose.connect('UrlUser'); //L'adresse de notre base de données
+        var db = mongoose.connection;
+        db.on('error', console.error.bind(console, 'connection error : '));
+        db.once('open',function(){
+            console.log("We are connected"); //Message a transmettre si connexion réussie
         })
-    })
+
+        profil.findOne({user: req.user.username}, function (err, doc) {
+
+            doc.pres    = req.body.presentation;
+            doc.nom     = req.body.NomPrenom;
+            doc.grade   = req.body.grade;
+            doc.email   = req.body.email;
+            doc.bureau  = req.body.bureau;
+            doc.save(function (err) {
+                if (err){
+                    consore.error("******** Erreur lors de la sauvegarde ********");
+                }else {
+                    console.log('******** Profile Mis a jour ********');
+                    res.redirect('/edition');
+                }
+
+            })
+        })
+
+
+        //**** Fermer la BDD
+
+    }
 
 });
 
@@ -64,6 +79,14 @@ router.post('/configuration', function (req, res, next) {
         var password = req.user.password;
         var newpassword = req.body.newPassword;
         var user = req.user;
+
+        // Clé spéciale utilisateur enseignant
+        mongoose.connect('UrlUser'); //L'adresse de notre base de données
+        var db = mongoose.connection;
+        db.on('error', console.error.bind(console, 'connection error : '));
+        db.once('open',function(){
+            console.log("We are connected"); //Message a transmettre si connexion réussie
+        })
 
         account.findByUsername(username).then(function(sanitizedUser) {
             if (sanitizedUser) {
@@ -109,6 +132,7 @@ router.get('/configuration', function (req, res, next) {
 
 // ****** Ajouter rubrique *******  // ================================================> OK
 router.post('/AddRubrique', function (req, res) {
+
     if (req.user){
         profil.findOne({user: req.user.username}, function (err, prof) {
             prof.rubriques.push({ titre : req.body.titreRubrique });
@@ -128,6 +152,7 @@ router.post('/AddRubrique', function (req, res) {
 
 // ****** Delete Rubrique ******* // ==================================================> OK
 router.get('/DeleteRubrique', function (req, res) {
+
     if (req.user){
         var id = req.query.IDRubrique;
         profil.findOne({user: req.user.username}, function (err, prof){
