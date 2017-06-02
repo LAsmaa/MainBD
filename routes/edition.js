@@ -36,7 +36,7 @@ router.get('/', function(req, res, next) {
 
 // ****** Mettre a jou un profil *******  // ============================================> OK
 router.post('/updateProfil', function (req, res) {
-    if(user){
+    if(req.user){
         //Se connecter avec la clé d'édition d'un profil
         // Clé spéciale utilisateur enseignant
         mongoose.connect('UrlUser'); //L'adresse de notre base de données
