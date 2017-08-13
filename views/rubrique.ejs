@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= rub.titre%></title>
+    <% include templates/header.ejs %>
+</head>
+<body>
+<header>
+    <%include templates/navBar.ejs %>
+</header>
+
+<div class="containerMain">
+    <div class="container">
+        <% rub.articles.reverse().forEach(function(art){ %>
+        <div class="col-sm-12">
+            <div class="well">
+                <h2><%= art.titreArticle %></h2>
+                <p><%- art.contenu %></p>
+            </div>
+        </div>
+        <%})%>
+    </div>
+
+</div>
+<% include templates/footer.ejs %>
+</body>
+</html>

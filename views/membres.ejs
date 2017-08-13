@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Membres</title>
+        <% include templates/header.ejs %>
+    </head>
+    <body>
+        <header>
+          <% include templates/navBar.ejs %>
+        </header>
+        <div class="containerMain">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-8">
+                        <table class="table table-condensed">
+                            <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Grade</th>
+                                <th>Contact</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% doc.forEach(function (doc) {
+                                if(doc.nom){
+                            %>
+                            <tr>
+                                <td><a href="/profile?nom=<%=doc.nom%>"><%= doc.nom %> </a></td>
+                                <td><%= doc.grade %></td>
+                                <td><%= doc.email%></td>
+                            </tr>
+                            <%} }) %>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+
+        <footer>
+            <% include templates/footer.ejs %>
+        </footer>
+    </body>
+</html>

@@ -1,0 +1,70 @@
+<% include baner.ejs%>
+<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav">
+                <li <% if (Active === 'index'){%> class="active"<%}%>><a href="/">Présentation</a></li>
+                <li <% if (Active === 'membres'){%> class="active"<%}%>><a href="/membres">Membres</a></li>
+                <% nav.forEach(function (doc) {
+                    if(doc.titreRubrique != 'Présentation'){
+                %>
+                    <li <% if (Active === doc.titreRubrique ){%> class="active"<%}%>><a href="/rubrique?titre=<%=doc.titreRubrique%>"><%= doc.titreRubrique %></a></li>
+
+                <%}})%>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <%if (!user) {%><li><a href="#" data-toggle="modal" data-target="#login-modal" ><span class="glyphicon glyphicon-log-in"></span>  Login</a></li>
+                <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog">
+                        <div class="col-sm-8 well" align="center">
+                            <div class="login-clean">
+                                <form class="form-horizontal" action="/login" method="post">
+                                    <div class="illustration"></div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5" for="User">Nom d'utilisateur:</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" id="User" placeholder="Nom d'utilisateur" name="username">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5" for="pwd">Mot de passe:</label>
+                                        <div class="col-sm-7">
+                                            <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <button type="submit" class="btn btn-default">Se connecter</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <a href="https://adminbdd.herokuapp.com/login" target="_blank" >Se connecter en tant qu'administrateur</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <%}if (user){%>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%= user.username %> connecté<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/edition"><span class="glyphicon glyphicon-edit"></span> Editer </a></li>
+                            <li><a href="/edition/configuration" ><span class="glyphicon glyphicon-log-in"></span> Modifier Mot de passe </a></li>
+
+
+                            <li> <a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Decconexion </a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <% }%>
+            </ul>
+        </div>
+    </div>
+</nav>

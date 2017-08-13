@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Présentation</title>
+      <% include templates/header.ejs %>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+  </head>
+  <body>
+  <header>
+      <% include templates/navBar.ejs %>
+
+  </header>
+
+<div>
+  <div class="containerMain">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-sm-8">
+            <% rub.articles.forEach(function(art){ %>
+          <% if(art.titreArticle === 'Présentation'){ %>
+            <div class="well">
+              <div class="well-lg">
+                <h2><%= art.titreArticle %></h2>
+
+                <p><%- art.contenu %></p>
+
+              </div>
+            </div>
+          </div>
+
+          <%}})%>
+
+
+        <div class="col-sm-4">
+          <div class="well">
+            <h3>Nouvelles</h3>
+              <% rub.articles.reverse().forEach(function(art){ %>
+              <% if(art.titreArticle != 'Présentation'){ %>
+            <hr>
+            <h4><%= art.titreArticle %></h4>
+            <p><%- art.contenu %></p>
+              <%}})%>
+          </div>
+        </div>
+      </div>
+
+
+      </div>
+    </div><br>
+  </div>
+
+  </div>
+
+  <footer>
+      <% include templates/footer.ejs %>
+  </footer>
+  </body>
+</html>
